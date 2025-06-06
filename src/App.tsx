@@ -7,7 +7,6 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
 import MainLayout from "./components/Layout/MainLayout";
 
-import Index from "./pages/Index";
 import Home from "./pages/Home";
 import Login from "./pages/Auth/Login";
 import Register from "./pages/Auth/Register";
@@ -53,7 +52,7 @@ const App = () => (
         <Sonner />
         <BrowserRouter>
           <Routes>
-            <Route path="/" element={<Index />} />
+            <Route path="/" element={<Home />} />
             <Route path="/home" element={<Home />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
