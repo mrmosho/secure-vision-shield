@@ -11,9 +11,7 @@ import {
   Lock, 
   Bell, 
   BarChart, 
-  CreditCard, 
-  TestTube, 
-  Users 
+  CreditCard
 } from "lucide-react";
 
 interface SidebarProps {
@@ -35,16 +33,6 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => {
       name: "Monitoring",
       path: "/monitoring",
       icon: <Lock className="w-5 h-5" />,
-    },
-    {
-      name: "Try Us",
-      path: "/try-us",
-      icon: <TestTube className="w-5 h-5" />,
-    },
-    {
-      name: "About Us",
-      path: "/about",
-      icon: <Users className="w-5 h-5" />,
     },
     {
       name: "Notifications",
