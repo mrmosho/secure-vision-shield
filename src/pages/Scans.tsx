@@ -1,10 +1,12 @@
-
 import React, { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
 import { 
   Scan, 
   Upload, 
@@ -14,14 +16,31 @@ import {
   Clock,
   Database,
   Folder,
-  Shield
+  Shield,
+  File,
+  Type
 } from "lucide-react";
+
+type ScanMode = "file" | "text";
 
 const Scans: React.FC = () => {
   const [isScanning, setIsScanning] = useState(false);
   const [scanProgress, setScanProgress] = useState(0);
+  const [scanMode, setScanMode] = useState<ScanMode>("file");
+  const [uploadedFile, setUploadedFile] = useState<File | null>(null);
+  const [textInput, setTextInput] = useState("");
 
   const handleNewScan = () => {
+    // Check if user has provided content
+    if (scanMode === "file" && !uploadedFile) {
+      alert("Please upload a file before starting the scan.");
+      return;
+    }
+    if (scanMode === "text" && !textInput.trim()) {
+      alert("Please enter some text before starting the scan.");
+      return;
+    }
+
     setIsScanning(true);
     setScanProgress(0);
     
@@ -35,6 +54,19 @@ const Scans: React.FC = () => {
         return prev + Math.random() * 15;
       });
     }, 500);
+  };
+
+  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      setUploadedFile(file);
+    }
+  };
+
+  const canStartScan = () => {
+    if (scanMode === "file") return uploadedFile !== null;
+    if (scanMode === "text") return textInput.trim().length > 0;
+    return false;
   };
 
   const recentScans = [
@@ -64,27 +96,6 @@ const Scans: React.FC = () => {
       detections: 156,
       timestamp: "1 day ago",
       icon: <FileText className="w-4 h-4" />
-    }
-  ];
-
-  const scanTypes = [
-    {
-      title: "Quick Scan",
-      description: "Scan recent files and databases for immediate threats",
-      duration: "5-10 minutes",
-      icon: <Scan className="w-6 h-6" />
-    },
-    {
-      title: "Full System Scan",
-      description: "Comprehensive scan of all connected data sources",
-      duration: "30-60 minutes",
-      icon: <Shield className="w-6 h-6" />
-    },
-    {
-      title: "Custom Scan",
-      description: "Select specific directories or databases to scan",
-      duration: "Variable",
-      icon: <Upload className="w-6 h-6" />
     }
   ];
 
@@ -120,7 +131,7 @@ const Scans: React.FC = () => {
         <h1 className="text-3xl font-bold tracking-tight">Security Scans</h1>
         <Button
           onClick={handleNewScan}
-          disabled={isScanning}
+          disabled={isScanning || !canStartScan()}
           className="bg-ts-purple-500 hover:bg-ts-purple-600"
         >
           <Scan className="mr-2 h-4 w-4" />
@@ -136,7 +147,7 @@ const Scans: React.FC = () => {
               Scan in Progress
             </CardTitle>
             <CardDescription>
-              Analyzing your data for sensitive information patterns...
+              Analyzing your {scanMode === "file" ? "file" : "text"} for sensitive information patterns...
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -156,35 +167,101 @@ const Scans: React.FC = () => {
         </TabsList>
 
         <TabsContent value="new-scan">
-          <div className="grid md:grid-cols-3 gap-6">
-            {scanTypes.map((scanType, index) => (
-              <Card key={index} className="cursor-pointer hover:shadow-lg transition-shadow">
-                <CardHeader>
-                  <div className="flex items-center space-x-2">
-                    <div className="p-2 bg-ts-purple-100 rounded-lg text-ts-purple-600">
-                      {scanType.icon}
+          <div className="space-y-6">
+            {/* Scan Mode Selection */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Choose Scan Method</CardTitle>
+                <CardDescription>
+                  Select how you want to provide content for scanning
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="grid md:grid-cols-2 gap-4">
+                  <Button
+                    variant={scanMode === "file" ? "default" : "outline"}
+                    className={`h-20 flex flex-col space-y-2 ${
+                      scanMode === "file" ? "bg-ts-purple-500 hover:bg-ts-purple-600" : ""
+                    }`}
+                    onClick={() => setScanMode("file")}
+                  >
+                    <Upload className="w-6 h-6" />
+                    <span>Upload File</span>
+                  </Button>
+                  <Button
+                    variant={scanMode === "text" ? "default" : "outline"}
+                    className={`h-20 flex flex-col space-y-2 ${
+                      scanMode === "text" ? "bg-ts-purple-500 hover:bg-ts-purple-600" : ""
+                    }`}
+                    onClick={() => setScanMode("text")}
+                  >
+                    <Type className="w-6 h-6" />
+                    <span>Text Input</span>
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Content Input Based on Mode */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center space-x-2">
+                  {scanMode === "file" ? <File className="w-5 h-5" /> : <Type className="w-5 h-5" />}
+                  <span>{scanMode === "file" ? "File Upload" : "Text Input"}</span>
+                </CardTitle>
+                <CardDescription>
+                  {scanMode === "file" 
+                    ? "Upload a document, database export, or any file containing sensitive data"
+                    : "Paste or type text content that you want to scan for sensitive information"
+                  }
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                {scanMode === "file" ? (
+                  <div className="space-y-4">
+                    <div>
+                      <Label htmlFor="file-upload">Select File</Label>
+                      <Input
+                        id="file-upload"
+                        type="file"
+                        onChange={handleFileUpload}
+                        accept=".txt,.pdf,.doc,.docx,.csv,.xlsx,.json"
+                        className="mt-1"
+                      />
                     </div>
-                    <CardTitle className="text-lg">{scanType.title}</CardTitle>
+                    {uploadedFile && (
+                      <div className="flex items-center space-x-2 p-3 bg-green-50 border border-green-200 rounded-md">
+                        <File className="w-4 h-4 text-green-600" />
+                        <span className="text-sm text-green-700">
+                          {uploadedFile.name} ({(uploadedFile.size / 1024).toFixed(1)} KB)
+                        </span>
+                      </div>
+                    )}
                   </div>
-                  <CardDescription>{scanType.description}</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm text-muted-foreground">
-                      Duration: {scanType.duration}
-                    </span>
-                    <Button 
-                      size="sm" 
-                      onClick={handleNewScan}
-                      disabled={isScanning}
-                      className="bg-ts-purple-500 hover:bg-ts-purple-600"
-                    >
-                      Start
-                    </Button>
+                ) : (
+                  <div className="space-y-4">
+                    <div>
+                      <Label htmlFor="text-input">Enter Text Content</Label>
+                      <Textarea
+                        id="text-input"
+                        placeholder="Paste or type your text content here..."
+                        value={textInput}
+                        onChange={(e) => setTextInput(e.target.value)}
+                        className="mt-1 min-h-[200px]"
+                      />
+                    </div>
+                    {textInput.trim() && (
+                      <div className="flex items-center space-x-2 p-3 bg-green-50 border border-green-200 rounded-md">
+                        <Type className="w-4 h-4 text-green-600" />
+                        <span className="text-sm text-green-700">
+                          {textInput.trim().length} characters ready for scanning
+                        </span>
+                      </div>
+                    )}
                   </div>
-                </CardContent>
-              </Card>
-            ))}
+                )}
+              </CardContent>
+            </Card>
           </div>
         </TabsContent>
 
