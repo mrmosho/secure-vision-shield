@@ -18,6 +18,7 @@ import Notifications from "./pages/Notifications";
 import Pricing from "./pages/Pricing";
 import TryUs from "./pages/TryUs";
 import AboutUs from "./pages/AboutUs";
+import Scans from "./pages/Scans";
 import NotFound from "./pages/NotFound";
 
 // Protected route component that redirects to login if not authenticated
@@ -82,6 +83,17 @@ const App = () => (
               }
             >
               <Route index element={<MonitoringPanel />} />
+            </Route>
+            
+            <Route 
+              path="/scans" 
+              element={
+                <ProtectedRoute>
+                  <MainLayout />
+                </ProtectedRoute>
+              }
+            >
+              <Route index element={<Scans />} />
             </Route>
             
             <Route 

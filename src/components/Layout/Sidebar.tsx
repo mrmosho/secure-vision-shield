@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
@@ -11,7 +10,8 @@ import {
   Lock, 
   Bell, 
   BarChart, 
-  CreditCard
+  CreditCard,
+  Scan
 } from "lucide-react";
 
 interface SidebarProps {
@@ -33,6 +33,11 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => {
       name: "Monitoring",
       path: "/monitoring",
       icon: <Lock className="w-5 h-5" />,
+    },
+    {
+      name: "Scans",
+      path: "/scans",
+      icon: <Scan className="w-5 h-5" />,
     },
     {
       name: "Notifications",
