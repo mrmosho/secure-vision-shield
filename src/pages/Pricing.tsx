@@ -3,12 +3,26 @@ import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Toggle } from "@/components/ui/toggle";
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { Check, Shield, Gift, Star, Clock, ArrowLeft } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { toast } from "@/hooks/use-toast";
 
 const Pricing: React.FC = () => {
   const [billingCycle, setBillingCycle] = useState<"monthly" | "yearly">("monthly");
+  const navigate = useNavigate();
+
+  const handlePlanSelect = (planName: string) => {
+    toast({
+      title: "Coming Soon!",
+      description: "Payment options are coming soon. For now, all accounts have Pro access for testing until the end of the year.",
+      duration: 4000,
+    });
+    
+    // Prompt to sign up
+    setTimeout(() => {
+      navigate('/register');
+    }, 2000);
+  };
 
   const plans = [
     {
@@ -66,10 +80,10 @@ const Pricing: React.FC = () => {
   return (
     <div className="container mx-auto px-4 py-12">
       <div className="flex items-center justify-between mb-8">
-        <Link to="/dashboard">
+        <Link to="/">
           <Button variant="ghost" className="flex items-center gap-2">
             <ArrowLeft size={16} />
-            Back to Dashboard
+            Back to Home
           </Button>
         </Link>
       </div>
@@ -135,6 +149,7 @@ const Pricing: React.FC = () => {
               <Button 
                 className={`w-full ${plan.name === "Enterprise" ? "bg-ts-purple-600" : ""}`}
                 variant={plan.name === "Professional" ? "default" : "outline"}
+                onClick={() => handlePlanSelect(plan.name)}
               >
                 {plan.ctaText}
               </Button>

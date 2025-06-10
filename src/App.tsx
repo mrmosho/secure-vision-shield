@@ -19,6 +19,7 @@ import Pricing from "./pages/Pricing";
 import TryUs from "./pages/TryUs";
 import AboutUs from "./pages/AboutUs";
 import Scans from "./pages/Scans";
+import Upgrade from "./pages/Upgrade";
 import NotFound from "./pages/NotFound";
 
 // Protected route component that redirects to login if not authenticated
@@ -116,6 +117,17 @@ const App = () => (
               }
             >
               <Route index element={<Notifications />} />
+            </Route>
+            
+            <Route 
+              path="/upgrade" 
+              element={
+                <ProtectedRoute>
+                  <MainLayout />
+                </ProtectedRoute>
+              }
+            >
+              <Route index element={<Upgrade />} />
             </Route>
             
             <Route path="*" element={<NotFound />} />
