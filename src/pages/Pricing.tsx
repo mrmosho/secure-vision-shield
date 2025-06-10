@@ -1,27 +1,20 @@
-
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Toggle } from "@/components/ui/toggle";
 import { Check, Shield, Gift, Star, Clock, ArrowLeft } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { toast } from "@/hooks/use-toast";
 
 const Pricing: React.FC = () => {
   const [billingCycle, setBillingCycle] = useState<"monthly" | "yearly">("monthly");
-  const navigate = useNavigate();
 
   const handlePlanSelect = (planName: string) => {
     toast({
       title: "Coming Soon!",
-      description: "Payment options are coming soon. For now, all accounts have Pro access for testing until the end of the year.",
-      duration: 4000,
+      description: "Payment options are coming soon. For now, all accounts have Pro access for testing until the end of the year. Please sign up to get started!",
+      duration: 5000,
     });
-    
-    // Prompt to sign up
-    setTimeout(() => {
-      navigate('/register');
-    }, 2000);
   };
 
   const plans = [
